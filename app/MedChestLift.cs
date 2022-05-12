@@ -104,65 +104,64 @@ class MedChestLift {
         /* data has columns "Person ID", "At Floor", "Going to Floor", "Time" */
         short time = 0;
         short curr_index = 0;
-        object[] schedule = {};
+        string debug_path = "C:\\Projects\\AVAMAE application process\\debug.txt";
+        Utility.clearFile(debug_path);
         string output_path = "C:\\Projects\\AVAMAE application process\\lift algorithm output.csv";
         Utility.clearFile(output_path);
-        object[] output_column_names = {"Time","People In Lift","At Floor","Call Queue"};
+        string[] output_column_names = {"Time","People In Lift","At Floor","Call Queue"};
+        CSVDataFrame output = new CSVDataFrame(output_column_names);
         Utility.appendArrayToFile(output_column_names,output_path);
 
-        while(curr_index < data.length()) {
+        while(true) {
 
-            List<short> delete_index = new List<short>(); // to store which elements we need to delete from schedule if a passenger is dropped off; can't delete during the loop as will interfere with end criteria of "for" loop
-            for(short i = 0; i < schedule.Length; i++) {
-                short floor = LiftObject.schedFloor(schedule[i]);
-                short ID = LiftObject.schedID(schedule[i]);
-
-                if(floor == lift.curr_floor) {
-                    char type = LiftObject.schedType(schedule[i]);
-
-                    if(type == char.Parse("C")) {
-                        short going_to_floor = (short) data.column("Going to Floor")[ID];
-                        schedule[i] = ID.ToString()+"_"+going_to_floor.ToString()+"D";
-                        schedule = lift.getScheduleThatMinimisesPF();
-                        lift.lift_schedule = schedule;
-                        Console.WriteLine("Picked up passenger "+ID.ToString()+" at time "+time.ToString()+" from floor "+floor.ToString());
-
+            // First, evaluate if the lift has reached a floor to drop off or pick up any passengers
+            
+            if(lift.lift_schedule.Length > 0) {
+                if(lift.curr_floor == LiftObject.schedFloor(lift.lift_schedule[0])) {
+                    char type = LiftObject.schedType(lift.lift_schedule[0]);
+                    if(type == char.Parse("D")) {
+                        Console.WriteLine("Dropped off passenger "+LiftObject.schedID(lift.lift_schedule[0]).ToString());
+                        lift.passengers[LiftObject.schedID(lift.lift_schedule[0])].journey_completed = true;
+                        lift.lift_schedule = Utility.subsetArray(lift.lift_schedule, 1, lift.lift_schedule.Length);
                     } else {
-                        delete_index.Add(i);
-                        Console.WriteLine("Dropped off passenger "+ID.ToString()+" at time "+time.ToString()+" at floor "+floor.ToString());
+                        Console.WriteLine("Picked up passenger "+LiftObject.schedID(lift.lift_schedule[0]).ToString());
+                        lift.lift_schedule[0] = LiftObject.schedID(lift.lift_schedule[0]).ToString()+"_"+data.column("Going to Floor")[LiftObject.schedID(lift.lift_schedule[0])-1].ToString()+"D";
+                        lift.passengers[LiftObject.schedID(lift.lift_schedule[0])].in_lift = true;
+                        lift.lift_schedule = lift.getScheduleThatMinimisesPF();
                     }
                 }
             }
 
-            object[] new_schedule = {};
-            for(short i = 0; i < schedule.Length; i++) {
-                if(!delete_index.Contains(i)) {
-                    Utility.appendArrays(new_schedule,schedule[i]);
+            if(curr_index < data.length()) {
+                while((short) data.column("Time")[curr_index] == time) {
+                    Console.WriteLine("New call from passenger "+data.column("Person ID")[curr_index].ToString()+" at time "+time.ToString()+" from floor "+data.column("At Floor")[curr_index].ToString());
+                    lift.lift_schedule = Utility.appendArrays(lift.lift_schedule,data.column("Person ID")[curr_index].ToString()+"_"+data.column("At Floor")[curr_index].ToString()+"C");
+                    LiftPassenger passenger_object = new LiftPassenger((short) data.column("At Floor")[curr_index],(short) data.column("Going to Floor")[curr_index],time);
+                    lift.passengers.Add((short) data.column("Person ID")[curr_index],passenger_object);
+                    lift.lift_schedule = lift.getScheduleThatMinimisesPF();
+                    curr_index++;
+                    if(curr_index >= data.length()) {
+                        break;
+                    }
                 }
+            } else {
+                // Now we know we're at a stage where there will be no new passengers and lift should process all remaining calls and then shut down
+                Console.WriteLine("All calls done - now processing remaining passengers...");
             }
 
-            schedule = new_schedule;
-            lift.lift_schedule = schedule;
 
-            if((short) data.column("Time")[curr_index] == time) {
-                Console.WriteLine("New call from passenger "+data.column("Person ID")[curr_index].ToString()+" at time "+time.ToString()+" from floor "+data.column("At Floor")[curr_index].ToString());
-                schedule = Utility.appendArrays(schedule,data.column("Person ID")[curr_index].ToString()+"_"+data.column("At Floor")[curr_index].ToString()+"C");
-                LiftPassenger passenger_object = new LiftPassenger((short) data.column("At Floor")[curr_index],(short) data.column("Going to Floor")[curr_index],time);
-                lift.passengers.Add((short) data.column("Person ID")[curr_index],passenger_object);
-                lift.lift_schedule = schedule;
-                schedule = lift.getScheduleThatMinimisesPF();
-                curr_index++;
-            }
             
             short next_floor = lift.curr_floor;
-            if(schedule.Length > 0) {
-                next_floor = LiftObject.schedFloor(schedule[0]);
+            if(lift.lift_schedule.Length > 0) {
+                next_floor = LiftObject.schedFloor(lift.lift_schedule[0]);
             }
 
             if(lift.curr_floor > next_floor) {
                 lift.curr_direction = -1;
-            } else {
+            } else if(lift.curr_floor < next_floor) {
                 lift.curr_direction = 1;
+            } else {
+                lift.curr_direction = 0;
             }
 
             time++;
@@ -171,21 +170,54 @@ class MedChestLift {
                     entry.Value.total_time++;
                 }
             }
+            /*
             if(time % LiftObject.time_per_floor == 0) {
-                lift.curr_floor = (short) Math.Max(Math.Min(lift.curr_floor + lift.curr_direction,LiftObject.num_floors),1);
+                lift.curr_floor += lift.curr_direction;
+                Console.WriteLine("Lift moved to floor "+lift.curr_floor.ToString());
                 foreach(KeyValuePair<short, LiftPassenger> entry in lift.passengers) {
                     if(entry.Value.in_lift & !entry.Value.journey_completed) {
                         entry.Value.travelling_PF++;
                     } else if(!entry.Value.journey_completed) {
                         entry.Value.waiting_PF++;
                     }
-             }
+                }
+            }*/
+            if(time % LiftObject.time_per_floor == 0) {
+                Console.WriteLine("Lift moved to floor "+next_floor.ToString()+" from floor "+lift.curr_floor.ToString());
+                short pf_gain = (short) Math.Abs(lift.curr_floor-next_floor);
+                lift.curr_floor = next_floor;
+                Console.WriteLine("PF gain: "+pf_gain.ToString());
+
+                foreach(KeyValuePair<short, LiftPassenger> entry in lift.passengers) {
+                    if(entry.Value.in_lift & !entry.Value.journey_completed) {
+                        entry.Value.travelling_PF += pf_gain;
+                    } else if(!entry.Value.journey_completed) {
+                        entry.Value.waiting_PF += pf_gain;
+                    }
+                }
+
+                // update output CSV whenever lift stops at a floor
+                output.appendToColumn("Time", (object) time);
+                object[] people_in_lift = {};
+                foreach(KeyValuePair<short, LiftPassenger> entry in lift.passengers) {
+                    if(entry.Value.in_lift & !entry.Value.journey_completed) {
+                        people_in_lift = Utility.appendArrays(people_in_lift,(object) entry.Key);
+                    }
+                }
+                output.appendToColumn("People In Lift", (object) string.Join(",",people_in_lift));
+                output.appendToColumn("At Floor",(object) lift.curr_floor);
+                output.appendToColumn("Call Queue",(object) string.Join(",",lift.lift_schedule));
             }
-        }
-        Console.WriteLine(string.Join(",",schedule));
-        foreach(KeyValuePair<short, LiftPassenger> entry in lift.passengers)
-        {  
-            Console.Write(entry.Key.ToString()+": "+entry.Value.debugString());
+            
+            Console.WriteLine(time);
+            if(curr_index >= data.length() & lift.lift_schedule.Length == 0) {
+                Console.WriteLine("Lift sim done! Last passenger dropped off at "+time.ToString());
+                foreach(KeyValuePair<short, LiftPassenger> entry in lift.passengers) {
+                    Console.WriteLine(entry.Key.ToString()+": "+entry.Value.debugString());
+                }
+                output.printTable();
+                break;
+            }
         }
     }
 }
@@ -195,7 +227,7 @@ class LiftObject {
     public static short max_capacity = 8;
     public static short time_per_floor = 10;
     public Dictionary<short, LiftPassenger> passengers = new Dictionary<short, LiftPassenger>();
-    public object[] lift_schedule = {}; // we declare this as a string so we can store both floor and type of visit: "(number of floor)(drop off or pick up)" - e.g. "1D" or "2P"
+    public object[] lift_schedule = {}; 
     public short curr_floor;
     public short curr_direction = 0; // 1 is up, -1 is down, 0 is no movement (e.g. lift empty)
 
@@ -257,11 +289,6 @@ class LiftObject {
         }
     }
 
-    public bool doesScheduleSatisfyCriteria(object[] schedule) {
-        bool result = true;
-        return(result);
-    }
-
     public static short schedID(object sched) {
         // Simple method to return the ID of a passenger, given their string entry into "schedules" or form (ID)_(floor)(D/C)
         return(Int16.Parse(sched.ToString().Split("_")[0]));
@@ -276,7 +303,7 @@ class LiftObject {
     public static char schedType(object sched) {
         // Simple method to return the ID of a passenger, given their string entry into "schedules" or form (ID)_(floor)(D/C)
         string[] split_schedule = sched.ToString().Split("_");
-        return(char.Parse(split_schedule[1].Substring(split_schedule[1].Length-2,1)));
+        return(char.Parse(split_schedule[1].Substring(split_schedule[1].Length-1,1)));
     }
 }
 
@@ -321,6 +348,10 @@ class CSVDataFrame {
 
     public void constructDataFrameManually(string[] new_column_names) {
         this.column_names = new_column_names;
+        for(int i = 0; i < new_column_names.Length; i++) {
+            object[] empty_array = {};
+            this.column_data = Utility.arrayAppendArrays(this.column_data,empty_array);
+        }
     }
 
     public static string[] readCSV(string filepath) {
@@ -343,12 +374,6 @@ class CSVDataFrame {
         }
     }
 
-    public void constructGenericDataFrame() {
-        /* A little different to constructShortDataFrame; assumes we've already chosen our column names
-           but don't currently have any actual data, and will be generating it as we go along */
-           this.column_data = new object[this.column_names.Length][];
-    }
-
     public void printTable() {
         /* used in the debugging process to ensure formatting was correct */
         for(int i = 0; i < this.column_names.Length; i++) {
@@ -367,6 +392,10 @@ class CSVDataFrame {
 
     public object[] column(string name) {
         return(this.column_data[Array.IndexOf(this.column_names,name)]);
+    }
+
+    public void appendToColumn(string column_name, object item) {
+        this.column_data[Array.IndexOf(this.column_names,column_name)] = Utility.appendArrays(this.column_data[Array.IndexOf(this.column_names,column_name)],item);
     }
 
     public int length() {
