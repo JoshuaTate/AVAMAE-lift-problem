@@ -4,6 +4,11 @@
    read the CSVs but I'll do it myself using the base system libs. */
 
 class Init {
+    /* First, some global variables defining filepaths for the tester to change to suit their system! */
+    public static string data_source_filepath = "C:\\Projects\\AVAMAE application process\\Cloud Software Engineer Coding Exercise Data.csv";
+    public static string debug_path = "C:\\Projects\\AVAMAE application process\\debug.txt";
+    public static string output_path = "C:\\Projects\\AVAMAE application process\\lift algorithm output.csv";
+
     public static void Main() {
         tests();
         MedChestLift algorithm = new MedChestLift();
@@ -91,10 +96,9 @@ class MedChestLift {
     public static short max_individual_PF_travelling = 20;
     public static short max_individual_PF_waiting = 20;
     public short algorithm_start_floor = 5;
-    private static string data_source_filepath = "C:\\Projects\\AVAMAE application process\\Cloud Software Engineer Coding Exercise Data.csv";
 
     public MedChestLift() {
-        CSVDataFrame CSV_dataframe = new CSVDataFrame(data_source_filepath);
+        CSVDataFrame CSV_dataframe = new CSVDataFrame(Init.data_source_filepath);
         CSV_dataframe.printTable();
         LiftObject lift = new LiftObject(this.algorithm_start_floor);
         this.mainAlgorithm(CSV_dataframe,lift);
@@ -104,13 +108,12 @@ class MedChestLift {
         /* data has columns "Person ID", "At Floor", "Going to Floor", "Time" */
         short time = 0;
         short curr_index = 0;
-        string debug_path = "C:\\Projects\\AVAMAE application process\\debug.txt";
-        Utility.clearFile(debug_path);
-        string output_path = "C:\\Projects\\AVAMAE application process\\lift algorithm output.csv";
-        Utility.clearFile(output_path);
+        
+        Utility.clearFile(Init.debug_path);
+        Utility.clearFile(Init.output_path);
         string[] output_column_names = {"Time","People In Lift","At Floor","Call Queue"};
         CSVDataFrame output = new CSVDataFrame(output_column_names);
-        Utility.appendArrayToFile(output_column_names,output_path);
+        Utility.appendArrayToFile(output_column_names,Init.output_path);
 
         while(true) {
 
@@ -204,9 +207,11 @@ class MedChestLift {
                         people_in_lift = Utility.appendArrays(people_in_lift,(object) entry.Key);
                     }
                 }
-                output.appendToColumn("People In Lift", (object) string.Join(",",people_in_lift));
+                // Since the actual columns should be seperated by commas, having the individual elements as comma-separated lists might be tricky
+                // Therefore, we can use another delimitter we haven't yet used in any of our lists, e.g. a hyphen
+                output.appendToColumn("People In Lift", (object) string.Join(",",people_in_lift).Replace(",","-"));
                 output.appendToColumn("At Floor",(object) lift.curr_floor);
-                output.appendToColumn("Call Queue",(object) string.Join(",",lift.lift_schedule));
+                output.appendToColumn("Call Queue",(object) string.Join(",",lift.lift_schedule).Replace(",","-"));
             }
             
             Console.WriteLine(time);
@@ -216,6 +221,7 @@ class MedChestLift {
                     Console.WriteLine(entry.Key.ToString()+": "+entry.Value.debugString());
                 }
                 output.printTable();
+                output.saveCSV(Init.output_path);
                 break;
             }
         }
@@ -242,8 +248,31 @@ class LiftObject {
         for(int i = 0; i < schedules.Length; i++) {
             int PF = calcSchedulePF(schedules[i]);
             if((min_PF < 0 | min_PF > PF) & PF >= 0) {
-                best_index = i;
-                min_PF = PF;
+                // First need to check it won't ruin capacity of lift
+                short existing_people_in_lift = 0;
+                bool allowed = true;
+                foreach(KeyValuePair<short,LiftPassenger> entry in this.passengers) {
+                    if(entry.Value.in_lift & !entry.Value.journey_completed) {
+                        existing_people_in_lift++;
+                    }
+                }
+                short lift_future_max_cap = existing_people_in_lift;
+                for(int j = 0; j < schedules[i].Length; j++) {
+                    char type = LiftObject.schedType(schedules[i][j]);
+                    if(type == char.Parse("C")) {
+                        lift_future_max_cap++;
+                    } else {
+                        lift_future_max_cap--;
+                    }
+                    if(lift_future_max_cap > LiftObject.max_capacity) {
+                        allowed = false;
+                        break;
+                    }
+                }
+                if(allowed) {
+                    best_index = i;
+                    min_PF = PF;
+                }
             }
         }
         return(schedules[best_index]);
@@ -401,6 +430,23 @@ class CSVDataFrame {
     public int length() {
         return(this.column_data[0].Length);
     }
+
+    public void saveCSV(string path) {
+        string[] lines = {};
+        object[] line = {};
+        for(int i = 0; i < this.column_names.Length; i++) {
+            line = Utility.appendArrays(line,this.column_names[i]);
+        }
+        lines = (string[]) Utility.appendArrays(lines,string.Join(",",line));
+        for(int i = 0; i < this.length(); i++) {
+            line = new object[] {};
+            for(int j = 0; j < this.column_names.Length; j++) {
+                line = Utility.appendArrays(line,this.column(this.column_names[j])[i]);
+            }
+            lines = Utility.appendArrays(lines,string.Join(",",line));
+        }
+        System.IO.File.WriteAllLines(path, lines.ToList());
+    }
 }
 
 class Utility {
@@ -500,7 +546,6 @@ class Utility {
         foreach(object item in array) {
             list_to_save = appendArrays(list_to_save, string.Join(",",item));
         }
-        System.IO.File.WriteAllLines(path, list_to_save.ToList());
     }
 
     public static void appendArrayToFile(object[] array, string path) {
