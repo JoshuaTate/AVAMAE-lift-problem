@@ -283,42 +283,6 @@ Lift moved to floor 2
 PF gain: 1
 200
 Picked up passenger 18
-298
-299
-Lift moved to floor 5
-PF gain: 1
-300
-Dropped off passenger 26
-301
-Dropped off passenger 21
-302
-303
-304
-305
-306
-307
-308
-309
-Lift moved to floor 4
-PF gain: 1
-310
-Dropped off passenger 22
-311
-Picked up passenger 28
-312
-Dropped off passenger 16
-New call from passenger 29
-313
-314
-315
-316
-317
-318
-319
-Lift moved to floor 3
-PF gain: 1
-320
-Picked up passenger 20
 201
 Dropped off passenger 11
 202
@@ -327,28 +291,8 @@ Dropped off passenger 11
 205
 206
 New call from passenger 19
-321
-322
-323
-324
-New call from passenger 30
 207
 Picked up passenger 19
-325
-326
-327
-328
-329
-Lift moved to floor 2
-PF gain: 1
-330
-Dropped off passenger 23
-331
-Picked up passenger 25
-332
-Picked up passenger 27
-333
-New call from passenger 31
 208
 209
 Lift moved to floor 1
@@ -370,16 +314,6 @@ PF gain: 5
 220
 Dropped off passenger 18
 New call from passenger 20
-334
-335
-336
-337
-338
-339
-Lift moved to floor 6
-PF gain: 4
-340
-Picked up passenger 30
 221
 222
 223
@@ -417,11 +351,6 @@ New call from passenger 22
 247
 248
 New call from passenger 23
-341
-342
-343
-344
-New call from passenger 32
 249
 Lift moved to floor 9
 PF gain: 1
@@ -467,15 +396,6 @@ Picked up passenger 24
 277
 278
 New call from passenger 26
-345
-346
-347
-348
-349
-Lift moved to floor 7
-PF gain: 1
-350
-Picked up passenger 32
 279
 Lift moved to floor 7
 PF gain: 1
@@ -490,31 +410,12 @@ Picked up passenger 23
 286
 287
 New call from passenger 27
-351
-Dropped off passenger 27
-New call from passenger 33
 288
 289
 Lift moved to floor 6
 PF gain: 1
 290
 Picked up passenger 26
-352
-353
-354
-355
-356
-357
-358
-359
-Lift moved to floor 8
-PF gain: 1
-360
-Dropped off passenger 28
-361
-362
-363
-New call from passenger 34
 291
 292
 293
@@ -523,215 +424,6 @@ New call from passenger 34
 296
 297
 New call from passenger 28
-364
-Picked up passenger 34
-365
-366
-367
-368
-369
-Lift moved to floor 9
-PF gain: 1
-370
-Dropped off passenger 25
-371
-Picked up passenger 29
-372
-373
-374
-375
-376
-New call from passenger 35
-377
-Picked up passenger 35
-378
-379
-Lift moved to floor 10
-PF gain: 1
-380
-Picked up passenger 31
-381
-Dropped off passenger 32
-382
-Dropped off passenger 35
-383
-Dropped off passenger 20
-384
-New call from passenger 36
-385
-386
-387
-388
-389
-Lift moved to floor 7
-PF gain: 3
-390
-Dropped off passenger 34
-391
-Dropped off passenger 29
-392
-393
-New call from passenger 37
-394
-395
-396
-397
-398
-399
-Lift moved to floor 5
-PF gain: 2
-400
-Picked up passenger 36
-401
-402
-403
-New call from passenger 38
-404
-Picked up passenger 38
-405
-406
-407
-408
-409
-Lift moved to floor 4
-PF gain: 1
-410
-Picked up passenger 33
-411
-Dropped off passenger 38
-412
-413
-New call from passenger 39
-414
-415
-416
-417
-418
-419
-Lift moved to floor 3
-PF gain: 1
-420
-Dropped off passenger 36
-421
-Dropped off passenger 31
-422
-Dropped off passenger 30
-423
-424
-New call from passenger 40
-New call from passenger 41
-425
-Picked up passenger 41
-426
-427
-428
-429
-Lift moved to floor 2
-PF gain: 1
-430
-Dropped off passenger 33
-431
-Picked up passenger 37
-New call from passenger 42
-432
-433
-434
-435
-436
-437
-438
-439
-Lift moved to floor 4
-PF gain: 2
-440
-Picked up passenger 42
-441
-442
-443
-New call from passenger 43
-444
-445
-446
-447
-448
-449
-Lift moved to floor 5
-PF gain: 1
-450
-Dropped off passenger 37
-451
-452
-453
-New call from passenger 44
-454
-455
-456
-457
-458
-459
-Lift moved to floor 6
-PF gain: 1
-460
-Picked up passenger 39
-461
-462
-463
-464
-465
-New call from passenger 45
-466
-467
-468
-469
-Lift moved to floor 5
-PF gain: 1
-470
-Dropped off passenger 39
-471
-Picked up passenger 45
-472
-473
-474
-475
-476
-477
-New call from passenger 46
-478
-479
-Lift moved to floor 6
-PF gain: 1
-480
-Picked up passenger 46
-481
-482
-483
-484
-485
-486
-487
-New call from passenger 47
-488
-Picked up passenger 47
-489
-Lift moved to floor 7
-PF gain: 1
-490
-Picked up passenger 44
-491
-Dropped off passenger 45
-492
-493
-494
-New call from passenger 48
-495
-496
-497
-498
-499
-Lift moved to floor 8
-PF gain: 1
-500
-Picked up passenger 40
 298
 299
 Lift moved to floor 5
@@ -770,9 +462,6 @@ PF gain: 1
 Picked up passenger 20
 321
 322
-501
-502
-New call from passenger 49
 323
 324
 New call from passenger 30
@@ -1023,18 +712,6 @@ Picked up passenger 46
 New call from passenger 47
 488
 Picked up passenger 47
-503
-504
-505
-506
-507
-508
-509
-Lift moved to floor 9
-PF gain: 1
-510
-Dropped off passenger 47
-New call from passenger 50
 489
 Lift moved to floor 7
 PF gain: 1
@@ -1058,247 +735,6 @@ Picked up passenger 40
 501
 502
 New call from passenger 49
-511
-Dropped off passenger 41
-All calls done - now processing remaining passengers...
-512
-All calls done - now processing remaining passengers...
-513
-All calls done - now processing remaining passengers...
-514
-All calls done - now processing remaining passengers...
-515
-All calls done - now processing remaining passengers...
-516
-All calls done - now processing remaining passengers...
-517
-All calls done - now processing remaining passengers...
-518
-All calls done - now processing remaining passengers...
-519
-All calls done - now processing remaining passengers...
-Lift moved to floor 10
-PF gain: 1
-520
-Dropped off passenger 42
-All calls done - now processing remaining passengers...
-521
-Picked up passenger 49
-All calls done - now processing remaining passengers...
-522
-Picked up passenger 43
-All calls done - now processing remaining passengers...
-523
-All calls done - now processing remaining passengers...
-524
-All calls done - now processing remaining passengers...
-525
-All calls done - now processing remaining passengers...
-526
-All calls done - now processing remaining passengers...
-527
-All calls done - now processing remaining passengers...
-528
-All calls done - now processing remaining passengers...
-529
-All calls done - now processing remaining passengers...
-Lift moved to floor 7
-PF gain: 3
-530
-Dropped off passenger 49
-All calls done - now processing remaining passengers...
-531
-All calls done - now processing remaining passengers...
-532
-All calls done - now processing remaining passengers...
-533
-All calls done - now processing remaining passengers...
-534
-All calls done - now processing remaining passengers...
-535
-All calls done - now processing remaining passengers...
-536
-All calls done - now processing remaining passengers...
-537
-All calls done - now processing remaining passengers...
-538
-All calls done - now processing remaining passengers...
-539
-All calls done - now processing remaining passengers...
-Lift moved to floor 4
-PF gain: 3
-540
-Picked up passenger 48
-All calls done - now processing remaining passengers...
-541
-Dropped off passenger 46
-All calls done - now processing remaining passengers...
-542
-All calls done - now processing remaining passengers...
-543
-All calls done - now processing remaining passengers...
-544
-All calls done - now processing remaining passengers...
-545
-All calls done - now processing remaining passengers...
-546
-All calls done - now processing remaining passengers...
-547
-All calls done - now processing remaining passengers...
-548
-All calls done - now processing remaining passengers...
-549
-All calls done - now processing remaining passengers...
-Lift moved to floor 3
-PF gain: 1
-550
-Dropped off passenger 44
-All calls done - now processing remaining passengers...
-551
-All calls done - now processing remaining passengers...
-552
-All calls done - now processing remaining passengers...
-553
-All calls done - now processing remaining passengers...
-554
-All calls done - now processing remaining passengers...
-555
-All calls done - now processing remaining passengers...
-556
-All calls done - now processing remaining passengers...
-557
-All calls done - now processing remaining passengers...
-558
-All calls done - now processing remaining passengers...
-559
-All calls done - now processing remaining passengers...
-Lift moved to floor 2
-PF gain: 1
-560
-Dropped off passenger 40
-All calls done - now processing remaining passengers...
-561
-Picked up passenger 50
-All calls done - now processing remaining passengers...
-562
-All calls done - now processing remaining passengers...
-563
-All calls done - now processing remaining passengers...
-564
-All calls done - now processing remaining passengers...
-565
-All calls done - now processing remaining passengers...
-566
-All calls done - now processing remaining passengers...
-567
-All calls done - now processing remaining passengers...
-568
-All calls done - now processing remaining passengers...
-569
-All calls done - now processing remaining passengers...
-Lift moved to floor 1
-PF gain: 1
-570
-Dropped off passenger 43
-All calls done - now processing remaining passengers...
-571
-All calls done - now processing remaining passengers...
-572
-All calls done - now processing remaining passengers...
-573
-All calls done - now processing remaining passengers...
-574
-All calls done - now processing remaining passengers...
-575
-All calls done - now processing remaining passengers...
-576
-All calls done - now processing remaining passengers...
-577
-All calls done - now processing remaining passengers...
-578
-All calls done - now processing remaining passengers...
-579
-All calls done - now processing remaining passengers...
-Lift moved to floor 6
-PF gain: 5
-580
-Dropped off passenger 50
-All calls done - now processing remaining passengers...
-581
-All calls done - now processing remaining passengers...
-582
-All calls done - now processing remaining passengers...
-583
-All calls done - now processing remaining passengers...
-584
-All calls done - now processing remaining passengers...
-585
-All calls done - now processing remaining passengers...
-586
-All calls done - now processing remaining passengers...
-587
-All calls done - now processing remaining passengers...
-588
-All calls done - now processing remaining passengers...
-589
-All calls done - now processing remaining passengers...
-Lift moved to floor 7
-PF gain: 1
-590
-Dropped off passenger 48
-All calls done - now processing remaining passengers...
-591
-Lift sim done! Last passenger dropped off at 591
-1: From floor 2; to floor 1; waiting pf 3; travelling pf 1; origin time 5; total time travelled 16; in lift True; journey completed True
-2: From floor 1; to floor 9; waiting pf 1; travelling pf 8; origin time 17; total time travelled 13; in lift True; journey completed True
-3: From floor 10; to floor 5; waiting pf 1; travelling pf 5; origin time 32; total time travelled 28; in lift True; journey completed True
-4: From floor 8; to floor 10; waiting pf 2; travelling pf 10; origin time 41; total time travelled 50; in lift True; journey completed True
-5: From floor 8; to floor 4; waiting pf 2; travelling pf 4; origin time 41; total time travelled 29; in lift True; journey completed True
-6: From floor 8; to floor 2; waiting pf 0; travelling pf 18; origin time 58; total time travelled 52; in lift True; journey completed True
-7: From floor 8; to floor 10; waiting pf 4; travelling pf 2; origin time 71; total time travelled 19; in lift True; journey completed True
-8: From floor 8; to floor 3; waiting pf 4; travelling pf 9; origin time 78; total time travelled 22; in lift True; journey completed True
-9: From floor 2; to floor 1; waiting pf 8; travelling pf 1; origin time 92; total time travelled 28; in lift True; journey completed True
-10: From floor 3; to floor 7; waiting pf 0; travelling pf 8; origin time 101; total time travelled 39; in lift True; journey completed True
-11: From floor 6; to floor 2; waiting pf 6; travelling pf 10; origin time 113; total time travelled 88; in lift True; journey completed True
-12: From floor 8; to floor 1; waiting pf 7; travelling pf 9; origin time 125; total time travelled 85; in lift True; journey completed True
-13: From floor 1; to floor 9; waiting pf 11; travelling pf 8; origin time 139; total time travelled 112; in lift True; journey completed True
-14: From floor 5; to floor 6; waiting pf 4; travelling pf 1; origin time 144; total time travelled 36; in lift True; journey completed True
-15: From floor 6; to floor 8; waiting pf 2; travelling pf 14; origin time 156; total time travelled 84; in lift True; journey completed True
-16: From floor 9; to floor 4; waiting pf 14; travelling pf 7; origin time 171; total time travelled 141; in lift True; journey completed True
-17: From floor 3; to floor 7; waiting pf 3; travelling pf 8; origin time 183; total time travelled 47; in lift True; journey completed True
-18: From floor 2; to floor 6; waiting pf 1; travelling pf 6; origin time 197; total time travelled 23; in lift True; journey completed True
-19: From floor 2; to floor 9; waiting pf 0; travelling pf 9; origin time 206; total time travelled 46; in lift True; journey completed True
-20: From floor 3; to floor 10; waiting pf 11; travelling pf 9; origin time 220; total time travelled 163; in lift True; journey completed True
-21: From floor 10; to floor 5; waiting pf 3; travelling pf 5; origin time 234; total time travelled 67; in lift True; journey completed True
-22: From floor 9; to floor 4; waiting pf 1; travelling pf 7; origin time 241; total time travelled 69; in lift True; journey completed True
-23: From floor 7; to floor 2; waiting pf 5; travelling pf 5; origin time 248; total time travelled 82; in lift True; journey completed True
-24: From floor 8; to floor 7; waiting pf 3; travelling pf 1; origin time 259; total time travelled 21; in lift True; journey completed True
-25: From floor 2; to floor 9; waiting pf 9; travelling pf 7; origin time 259; total time travelled 111; in lift True; journey completed True
-26: From floor 6; to floor 5; waiting pf 2; travelling pf 1; origin time 278; total time travelled 22; in lift True; journey completed True
-27: From floor 2; to floor 7; waiting pf 5; travelling pf 5; origin time 287; total time travelled 64; in lift True; journey completed True
-28: From floor 4; to floor 8; waiting pf 2; travelling pf 8; origin time 297; total time travelled 63; in lift True; journey completed True
-29: From floor 9; to floor 7; waiting pf 9; travelling pf 4; origin time 312; total time travelled 79; in lift True; journey completed True
-30: From floor 6; to floor 3; waiting pf 5; travelling pf 11; origin time 324; total time travelled 98; in lift True; journey completed True
-31: From floor 10; to floor 3; waiting pf 8; travelling pf 7; origin time 333; total time travelled 88; in lift True; journey completed True
-32: From floor 7; to floor 10; waiting pf 1; travelling pf 3; origin time 344; total time travelled 37; in lift True; journey completed True
-33: From floor 4; to floor 2; waiting pf 9; travelling pf 2; origin time 351; total time travelled 79; in lift True; journey completed True
-34: From floor 8; to floor 7; waiting pf 0; travelling pf 5; origin time 363; total time travelled 27; in lift True; journey completed True
-35: From floor 9; to floor 10; waiting pf 0; travelling pf 1; origin time 376; total time travelled 6; in lift True; journey completed True
-36: From floor 5; to floor 3; waiting pf 5; travelling pf 2; origin time 384; total time travelled 36; in lift True; journey completed True
-37: From floor 2; to floor 5; waiting pf 5; travelling pf 3; origin time 393; total time travelled 57; in lift True; journey completed True
-38: From floor 5; to floor 4; waiting pf 0; travelling pf 1; origin time 403; total time travelled 8; in lift True; journey completed True
-39: From floor 6; to floor 5; waiting pf 6; travelling pf 1; origin time 413; total time travelled 57; in lift True; journey completed True
-40: From floor 8; to floor 2; waiting pf 9; travelling pf 10; origin time 424; total time travelled 136; in lift True; journey completed True
-41: From floor 3; to floor 9; waiting pf 0; travelling pf 10; origin time 424; total time travelled 87; in lift True; journey completed True
-42: From floor 4; to floor 10; waiting pf 2; travelling pf 8; origin time 431; total time travelled 89; in lift True; journey completed True
-43: From floor 10; to floor 1; waiting pf 8; travelling pf 9; origin time 443; total time travelled 127; in lift True; journey completed True
-44: From floor 7; to floor 3; waiting pf 4; travelling pf 10; origin time 453; total time travelled 97; in lift True; journey completed True
-45: From floor 5; to floor 7; waiting pf 1; travelling pf 2; origin time 465; total time travelled 26; in lift True; journey completed True
-46: From floor 6; to floor 4; waiting pf 1; travelling pf 10; origin time 477; total time travelled 64; in lift True; journey completed True
-47: From floor 6; to floor 9; waiting pf 0; travelling pf 3; origin time 487; total time travelled 23; in lift True; journey completed True
-48: From floor 4; to floor 7; waiting pf 9; travelling pf 9; origin time 494; total time travelled 96; in lift True; journey completed True
-49: From floor 10; to floor 7; waiting pf 2; travelling pf 3; origin time 502; total time travelled 28; in lift True; journey completed True
-50: From floor 2; to floor 6; waiting pf 9; travelling pf 6; origin time 510; total time travelled 70; in lift True; journey completed True
 503
 504
 505
