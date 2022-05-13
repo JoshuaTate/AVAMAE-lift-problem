@@ -1,10 +1,8 @@
-﻿/* Since there's no guarantee The MedicineChest will have my C# libaries,
-   I'll try and do everything from more or less first principles using
-   Very standard libraries. We could use CsvHelper or a similar lib to
-   read the CSVs but I'll do it myself using the base system libs. */
+﻿/* There are likely faster ways of doing much of the below with C# libraries, but for 
+   the purposes of this exercise I'll try and do as much as possible from first principles */
 
 class Init {
-    /* First, some global variables defining filepaths for the tester to change to suit their system! */
+    // First, some global variables defining filepaths for the tester to change to suit their system!
     public static string data_source_filepath = "C:\\Projects\\AVAMAE application process\\Cloud Software Engineer Coding Exercise Data.csv";
     public static string debug_path = "C:\\Projects\\AVAMAE application process\\debug.txt";
     public static string output_path = "C:\\Projects\\AVAMAE application process\\lift algorithm output.csv";
@@ -15,16 +13,18 @@ class Init {
     }
 
     public static void tests() {
-        /* First, some tests! */
+        /* Time to run some tests to make sure the various helper classes / methods I've run are working correctly
+           It's likely there are much faster, perhaps obvious ways to do some of the stuff below but due to time pressure,
+           I chose the simple, first-principles way over doing some research for some things since I'm not experienced in C# */
         object[] test_array = {0,1,2,3,4,5,6,7};
 
         /* Test all the "Utility" class functions,
-           Starting with "subsetArray": */
+           Starting with "subsetArray": returns a slice of an array */
         object[] test_result = Utility.subsetArray(test_array,1,test_array.Length);
         Console.Write(string.Join(",",test_result)); // expected 1,2,3,4,5,6,7
         Console.WriteLine(" - subsetArray Test passed? "+(string.Join(",",test_result) == "1,2,3,4,5,6,7").ToString());
 
-        // Test "addArrays":
+        // Test "addArrays": adds together two arrays (e.g. appends one to the other)
         test_result = Utility.addArrays(test_array,test_array);
         Console.Write(string.Join(",",test_result)); // expected 0,1,2,3,4,5,6,7,0,1,2,3,4,5,6,7
         Console.WriteLine(" - addArrays Test passed? "+(string.Join(",",test_result) == "0,1,2,3,4,5,6,7,0,1,2,3,4,5,6,7").ToString());
@@ -34,7 +34,7 @@ class Init {
         Console.Write(string.Join(",",test_result)); // expected 0,1,2,3,4,5,6,7,8
         Console.WriteLine(" - appendArrays Test passed? "+(string.Join(",",test_result) == "0,1,2,3,4,5,6,7,8").ToString());
 
-        object[] second_test_array = {};
+        object[] second_test_array = {};  // edge case that I suspected may have been causing a bug
         test_result = Utility.appendArrays(second_test_array,8);
         Console.Write(string.Join(",",test_result)); // expected 8
         Console.WriteLine(" - appendArrays Test passed? "+(string.Join(",",test_result) == "8").ToString());
@@ -48,12 +48,12 @@ class Init {
         }
         Console.WriteLine("Correct length? "+(test_2D_array.Length == 3).ToString());
 
-        // Test "rotateArray":
+        // Test "rotateArray": brings all elements down one index and sends the 0th element to the back
         test_result = Utility.rotateArray(test_array);
         Console.Write(string.Join(",",test_result)); // expected 1,2,3,4,5,6,7,0
         Console.WriteLine(" - rotateArray Test passed? "+(string.Join(",",test_result) == "1,2,3,4,5,6,7,0").ToString());
 
-        // Now the big one - test "getAllPossibleListCombinations":
+        // Now the big one - test "getAllPossibleListCombinations": returns a 2D array containing all possible ways of ordering an array
         test_array = new object[] {0,1,2,3,4,5,6,7};
         object[][] results = Utility.getAllPossibleListCombinations(test_array);
         Console.Write(results.Length); // expected 8!, or 40,320
@@ -63,20 +63,21 @@ class Init {
            Testing the lift and it's functions!
            ------------------------------------------------------- */
         LiftObject test_lift = new LiftObject(5);
-        object[] test_schedule = {"1_3C","2_5D","3_8C","4_1D"};
+        object[] test_schedule = {"1_3C","2_5D","3_8C","4_1D"}; // (ID)_(Floor)("C" for calling the lift to a floor, "D" for passenger already in lift requesting to be dropped off )
         test_lift.passengers = new Dictionary<short, LiftPassenger>();
         foreach(object item in test_schedule) {
-            short ID = LiftObject.schedID(item);
-            short floor = LiftObject.schedFloor(item);
-            test_lift.passengers.Add(ID,new LiftPassenger(floor,1,0));
+            short ID = LiftObject.schedID(item); // returns the ID of the passenger from the "schedule" using above convention as a short
+            short floor = LiftObject.schedFloor(item); // returns the destination floor for a lift call from the "schedule" using above convention as a short
+            test_lift.passengers.Add(ID,new LiftPassenger(floor,1,0)); // passenger stores all passenger data as a LiftPassenger object
         }
 
-        // Test "calcSchedulePF":
+        // Test "calcSchedulePF": returns the "PF" value, as described in the previous application stage, of a "schedule"
         int PF = test_lift.calcSchedulePF(test_schedule);
         Console.Write(PF); // Expect abs(5-3)*4 + abs(3-5)*3 + abs(8-5)*2 + abs(1-8) = 27
         Console.WriteLine(" - calcSchedulePF Test passed? "+(PF == 27).ToString());
         
-        // Test "getScheduleThatMinimisesPF":
+        // Test "getScheduleThatMinimisesPF": loops over all schedules returned using "getAllPossibleCombinations" and finds the one with the lowest PF
+        // "getScheduleThatMinimisesPF" needs a LiftObject as it takes previous PF scores of all passengers into account
         test_schedule = new object[] {"1_3C","2_5D","3_8C","4_1D","5_2D","6_9D","7_10C","8_6C","9_7D"};
         test_lift.lift_schedule = test_schedule;
         test_lift.curr_floor = 1;
@@ -92,56 +93,60 @@ class Init {
     }
 }
 
-class MedChestLift {
-    public static short max_individual_PF_travelling = 20;
-    public static short max_individual_PF_waiting = 20;
-    public short algorithm_start_floor = 5;
+class MedChestLift { 
+    /* main class containing the algorithm that runs the lift
+       Changing the below constants will change the lift's behaviour - the below are reasonable but feel free to experiment! */
+    public static short max_individual_PF_travelling = 20; // max "PF"" an individual can spend in the lift before it takes them to their floor regardless of if it's the most efficient choice
+    public static short max_individual_PF_waiting = 20; // max "PF"" an individual can spend waiting for lift before it picks them up regardless of if it's the most efficient choice
+    public static short algorithm_start_floor = 5; // floor the lift starts on
 
     public MedChestLift() {
-        CSVDataFrame CSV_dataframe = new CSVDataFrame(Init.data_source_filepath);
+        CSVDataFrame CSV_dataframe = new CSVDataFrame(Init.data_source_filepath); // loads in the target data and puts it in a convenient object
         CSV_dataframe.printTable();
-        LiftObject lift = new LiftObject(this.algorithm_start_floor);
+        LiftObject lift = new LiftObject(MedChestLift.algorithm_start_floor);
         this.mainAlgorithm(CSV_dataframe,lift);
     }
 
     public void mainAlgorithm(CSVDataFrame data, LiftObject lift) {
-        /* data has columns "Person ID", "At Floor", "Going to Floor", "Time" */
+        /* main algorithm that will print several debug statements and output a CSV with the requested format */
         short time = 0;
-        short curr_index = 0;
+        short curr_index = 0; // corresponds to the row of the CSV data; essentially represents the ID (-1) of the next person to call the lift
         
-        Utility.clearFile(Init.debug_path);
-        Utility.clearFile(Init.output_path);
+        Utility.clearFile(Init.debug_path); // creates an empty file for relevant info to be appended to as required
+        Utility.clearFile(Init.output_path); // readies the output file to be filled as the algorithm runs
         string[] output_column_names = {"Time","People In Lift","At Floor","Call Queue"};
-        CSVDataFrame output = new CSVDataFrame(output_column_names);
-        Utility.appendArrayToFile(output_column_names,Init.output_path);
+        CSVDataFrame output = new CSVDataFrame(output_column_names); // create the data frame for storing data eventually used to populate the output CSV 
+        Utility.appendArrayToFile(output_column_names,Init.output_path); // appends an array as raw text to the end of file without modifying any existing lines in that file
 
         while(true) {
 
             // First, evaluate if the lift has reached a floor to drop off or pick up any passengers
             
-            if(lift.lift_schedule.Length > 0) {
-                if(lift.curr_floor == LiftObject.schedFloor(lift.lift_schedule[0])) {
-                    char type = LiftObject.schedType(lift.lift_schedule[0]);
+            if(lift.lift_schedule.Length > 0) { // check if there is any floors in the lift's queue
+                if(lift.curr_floor == LiftObject.schedFloor(lift.lift_schedule[0])) { // see if the lift has reached it's next scheduled stop
+                    char type = LiftObject.schedType(lift.lift_schedule[0]); // determine if the next call in the queue is to pick someone up ("C") or drop them off ("D")
                     if(type == char.Parse("D")) {
-                        Console.WriteLine("Dropped off passenger "+LiftObject.schedID(lift.lift_schedule[0]).ToString());
+                        Utility.appendStringToFile("Dropped off passenger "+LiftObject.schedID(lift.lift_schedule[0]).ToString(),Init.debug_path);
                         lift.passengers[LiftObject.schedID(lift.lift_schedule[0])].journey_completed = true;
-                        lift.lift_schedule = Utility.subsetArray(lift.lift_schedule, 1, lift.lift_schedule.Length);
+                        lift.lift_schedule = Utility.subsetArray(lift.lift_schedule, 1, lift.lift_schedule.Length); // when a passenger is dropped off they should be removed from the lift's schedule
                     } else {
-                        Console.WriteLine("Picked up passenger "+LiftObject.schedID(lift.lift_schedule[0]).ToString());
-                        lift.lift_schedule[0] = LiftObject.schedID(lift.lift_schedule[0]).ToString()+"_"+data.column("Going to Floor")[LiftObject.schedID(lift.lift_schedule[0])-1].ToString()+"D";
-                        lift.passengers[LiftObject.schedID(lift.lift_schedule[0])].in_lift = true;
-                        lift.lift_schedule = lift.getScheduleThatMinimisesPF();
+                        Utility.appendStringToFile("Picked up passenger "+LiftObject.schedID(lift.lift_schedule[0]).ToString(),Init.debug_path);
+                        lift.lift_schedule[0] = LiftObject.schedID(lift.lift_schedule[0]).ToString()+"_"+data.column("Going to Floor")[LiftObject.schedID(lift.lift_schedule[0])-1].ToString()+"D"; // when a passenger is picked up we maintain the (ID)_(Floor)("D"/"C") convention, but need to change origin floor to destination floor and "C" to "D"
+                        lift.passengers[LiftObject.schedID(lift.lift_schedule[0])].in_lift = true; // so we know to start counting their "travelling_PF" and not "waiting_PF" since we chose to place constraints on both separately
+                        lift.lift_schedule = lift.getScheduleThatMinimisesPF(); // find the new most efficient schedule
                     }
                 }
             }
 
+            // If we know there are still calls remaining in our data set, we listen for new calls at each unit of time
+
             if(curr_index < data.length()) {
                 while((short) data.column("Time")[curr_index] == time) {
-                    Console.WriteLine("New call from passenger "+data.column("Person ID")[curr_index].ToString()+" at time "+time.ToString()+" from floor "+data.column("At Floor")[curr_index].ToString());
-                    lift.lift_schedule = Utility.appendArrays(lift.lift_schedule,data.column("Person ID")[curr_index].ToString()+"_"+data.column("At Floor")[curr_index].ToString()+"C");
-                    LiftPassenger passenger_object = new LiftPassenger((short) data.column("At Floor")[curr_index],(short) data.column("Going to Floor")[curr_index],time);
-                    lift.passengers.Add((short) data.column("Person ID")[curr_index],passenger_object);
-                    lift.lift_schedule = lift.getScheduleThatMinimisesPF();
+                    Utility.appendStringToFile("New call from passenger "+data.column("Person ID")[curr_index].ToString(),Init.debug_path);
+                    lift.lift_schedule = Utility.appendArrays(lift.lift_schedule,data.column("Person ID")[curr_index].ToString()+"_"+data.column("At Floor")[curr_index].ToString()+"C"); // register the new call in the lift's schedule
+                    LiftPassenger passenger_object = new LiftPassenger((short) data.column("At Floor")[curr_index],(short) data.column("Going to Floor")[curr_index],time); 
+                    lift.passengers.Add((short) data.column("Person ID")[curr_index],passenger_object); // create the passenger object and add it to our dictionary with the ID as the key, so we can access more detail about the passenger without complicating our lift schedule array
+                    lift.lift_schedule = lift.getScheduleThatMinimisesPF(); // recalc the lift schedule now that we've picked up the new passenger
                     curr_index++;
                     if(curr_index >= data.length()) {
                         break;
@@ -149,15 +154,22 @@ class MedChestLift {
                 }
             } else {
                 // Now we know we're at a stage where there will be no new passengers and lift should process all remaining calls and then shut down
-                Console.WriteLine("All calls done - now processing remaining passengers...");
+                Utility.appendStringToFile("All calls done - now processing remaining passengers...",Init.debug_path);
             }
 
-
-            
             short next_floor = lift.curr_floor;
             if(lift.lift_schedule.Length > 0) {
-                next_floor = LiftObject.schedFloor(lift.lift_schedule[0]);
+                next_floor = LiftObject.schedFloor(lift.lift_schedule[0]); // if there exists calls in the lifts queue, set it's aim to the next one
             }
+            /* ------------------------- DISCUSSION ---------------------------
+               There was some ambiguity in the AVAMAE instructions; I'm told to "assume the lift takes 10 seconds to move from one floor to the next"
+               This could be interpreted as the lift takes 10 seconds to move from it's current floor to the floor corresponding to the next scheduled call,
+               or it could mean the lift takes 10 seconds to travel the distance of one single floor.
+               I initially thought it was the latter but it became clear when writing that this would be unrealistically slow so I opted to finish the code using
+               the former; however, I left the original code and variables in as a demonstration for how it might work.
+               ---------------------------------------------------------------- */
+
+            /* UNUSED - as part of "lift moves one single floor in 10 seconds" old system
 
             if(lift.curr_floor > next_floor) {
                 lift.curr_direction = -1;
@@ -165,7 +177,7 @@ class MedChestLift {
                 lift.curr_direction = 1;
             } else {
                 lift.curr_direction = 0;
-            }
+            }*/
 
             time++;
             foreach(KeyValuePair<short, LiftPassenger> entry in lift.passengers) {
@@ -173,7 +185,8 @@ class MedChestLift {
                     entry.Value.total_time++;
                 }
             }
-            /*
+            /* UNUSED - as part of "lift moves one single floor in 10 seconds" old system   
+
             if(time % LiftObject.time_per_floor == 0) {
                 lift.curr_floor += lift.curr_direction;
                 Console.WriteLine("Lift moved to floor "+lift.curr_floor.ToString());
@@ -185,13 +198,14 @@ class MedChestLift {
                     }
                 }
             }*/
-            if(time % LiftObject.time_per_floor == 0) {
-                Console.WriteLine("Lift moved to floor "+next_floor.ToString()+" from floor "+lift.curr_floor.ToString());
-                short pf_gain = (short) Math.Abs(lift.curr_floor-next_floor);
-                lift.curr_floor = next_floor;
-                Console.WriteLine("PF gain: "+pf_gain.ToString());
 
-                foreach(KeyValuePair<short, LiftPassenger> entry in lift.passengers) {
+            if(time % LiftObject.time_per_floor == 0) { // The lift taking 10 seconds to move from current to target floor is equivalent to it moving once every 10 seconds
+                Utility.appendStringToFile("Lift moved to floor "+next_floor.ToString(),Init.debug_path);
+                short pf_gain = (short) Math.Abs(lift.curr_floor-next_floor); // We keep track of total PF waited and travelled for each passenger so need to obviously calculate this whenever the lift runs
+                lift.curr_floor = next_floor; // working under the "lift magically teleports to it's desired floor every 10 seconds" model
+                Utility.appendStringToFile("PF gain: "+pf_gain.ToString(),Init.debug_path);
+
+                foreach(KeyValuePair<short, LiftPassenger> entry in lift.passengers) { // Calculate if passenger is due to be picked up or dropped off and then update their PF_waiting/travelled count
                     if(entry.Value.in_lift & !entry.Value.journey_completed) {
                         entry.Value.travelling_PF += pf_gain;
                     } else if(!entry.Value.journey_completed) {
@@ -214,17 +228,22 @@ class MedChestLift {
                 output.appendToColumn("Call Queue",(object) string.Join(",",lift.lift_schedule).Replace(",","-"));
             }
             
-            Console.WriteLine(time);
+            Console.WriteLine(time); // Nice to leave this as a console output as well so we can see the script isn't stuck
+            Utility.appendStringToFile(time.ToString(),Init.debug_path);
             if(curr_index >= data.length() & lift.lift_schedule.Length == 0) {
-                Console.WriteLine("Lift sim done! Last passenger dropped off at "+time.ToString());
+                Utility.appendStringToFile("Lift sim done! Last passenger dropped off at "+time.ToString(),Init.debug_path);
                 foreach(KeyValuePair<short, LiftPassenger> entry in lift.passengers) {
-                    Console.WriteLine(entry.Key.ToString()+": "+entry.Value.debugString());
+                    Utility.appendStringToFile(entry.Key.ToString()+": "+entry.Value.debugString(),Init.debug_path);
                 }
                 output.printTable();
                 output.saveCSV(Init.output_path);
                 break;
             }
         }
+        // Sleep for a while so the user can read the output if running purely the console application
+        Console.WriteLine("Simulation complete!");
+        Console.WriteLine("Output CSV has been saved - can now safely close window (will auto-close in 60 secs)");
+        Thread.Sleep(60000);
     }
 }
 
@@ -242,6 +261,10 @@ class LiftObject {
     }
 
     public object[] getScheduleThatMinimisesPF() {
+        /* Discussed in more detail in the documentation; essentially takes the "lift_schedule" array and uses
+           the "getAllPossibleListCombinations" function to get every single possible order of floors the lift can call at
+           Then checks each one satisfies any criteria e.g. max capacity, and individual passenger PF's, and 
+           find the schedule with the lowest PF value and returns it */
         object[][] schedules = Utility.getAllPossibleListCombinations(this.lift_schedule);
         int min_PF = -1; // Could arbitrarily set this to "9999" or something but I like to avoid doing this where possible incase I don't consider that a case like this might bite somehow
         int best_index = -1;
@@ -251,25 +274,26 @@ class LiftObject {
                 // First need to check it won't ruin capacity of lift
                 short existing_people_in_lift = 0;
                 bool allowed = true;
-                foreach(KeyValuePair<short,LiftPassenger> entry in this.passengers) {
+                foreach(KeyValuePair<short,LiftPassenger> entry in this.passengers) { // need to find how many people are currently in lift
                     if(entry.Value.in_lift & !entry.Value.journey_completed) {
                         existing_people_in_lift++;
                     }
                 }
                 short lift_future_max_cap = existing_people_in_lift;
-                for(int j = 0; j < schedules[i].Length; j++) {
+                for(int j = 0; j < schedules[i].Length; j++) { // checks at no point in the lift's future schedule will it go over maximum capacity
                     char type = LiftObject.schedType(schedules[i][j]);
                     if(type == char.Parse("C")) {
                         lift_future_max_cap++;
                     } else {
                         lift_future_max_cap--;
                     }
+                    // rejects the schedule if it doesn't meet all criteria. The convenience of calcuating every possible schedule means there will (almost?) always be a valid solution
                     if(lift_future_max_cap > LiftObject.max_capacity) {
                         allowed = false;
                         break;
                     }
                 }
-                if(allowed) {
+                if(allowed) { // if a schedule is found that is more efficient than the current most efficient and doesn't break any criteria, remember it
                     best_index = i;
                     min_PF = PF;
                 }
@@ -283,15 +307,15 @@ class LiftObject {
            where D is code for drop-off and C is code for call */
         int PF = 0;
         int curr_floor_sim = this.curr_floor;
-        int[] passenger_PFs = new int[schedule.Length];
+        int[] passenger_PFs = new int[schedule.Length]; // need to store individual passenger PF's as well as total PF if we wish to impose extra criteria on an individual's maximum waiting time
         bool allowed = true;
         bool break_loop = false;
-        for(int i = 0; i < schedule.Length; i++) {
+        for(int i = 0; i < schedule.Length; i++) { // hopefully this loop is self explanatory - calc number of floors between current and next, update PF value, then move to that floor and repeat
             short next_floor = LiftObject.schedFloor(schedule[i]);
             PF += Math.Abs(curr_floor_sim - next_floor) * (schedule.Length - i);
             curr_floor_sim = next_floor;
-            for(int j = i; j < schedule.Length; j++) {
-                passenger_PFs[j] += Math.Abs(curr_floor_sim - next_floor); // need to keep a record of each individual's PF to ensure nobody is left waiting too long
+            for(int j = i; j < schedule.Length; j++) { // update each individual's PF value, noting that a few people would have hypothetically got off the lift at this point
+                passenger_PFs[j] += Math.Abs(curr_floor_sim - next_floor);
                 char type = LiftObject.schedType(schedule[j]);
                 short ID = LiftObject.schedID(schedule[j]);
                 short curr_PF;
@@ -314,7 +338,7 @@ class LiftObject {
         if(allowed) {
             return(PF);
         } else {
-            return(-1);
+            return(-1); // I currently don't have any way of handling the exception "-1" case because I know it won't arise for me for the dataset I'm given - perhaps a talking point for later
         }
     }
 
@@ -337,6 +361,7 @@ class LiftObject {
 }
 
 class LiftPassenger {
+    // Class to store additional useful information about passengers in or waiting for the lift
     public short origin_floor;
     public short destination_floor;
     public short waiting_PF;
@@ -353,29 +378,37 @@ class LiftPassenger {
     }
 
     public string debugString() {
+        // Prints a helpful summary of the properties of an object of this class
         string debug = "From floor "+this.origin_floor.ToString()+"; to floor "+this.destination_floor.ToString()+"; waiting pf "+this.waiting_PF.ToString()+"; travelling pf "+this.travelling_PF.ToString()+"; origin time "+this.origin_time.ToString()+"; total time travelled "+this.total_time.ToString()+"; in lift "+in_lift.ToString()+"; journey completed "+journey_completed.ToString();
         return(debug);
     }
 }
 
 class CSVDataFrame {
+    // A "Data frame"-esque object used to provide CSV-like data in a convenient format with a few helper methods
     public string[] column_names = {};
     public object[][] column_data = {};
 
     public CSVDataFrame(string filepath) {
+        /* Overloaded - if you want to populate a CSVDataFrame object with an existing CSV file you can pass the filename
+           and it will populate the object automatically */
         constructDataFrameFromCSV(filepath);
     }
 
     public CSVDataFrame(string[] new_column_names) {
+        /* Overloaded - if you want to create your own data frame, not from any existing CSV file, then you
+           can pass a string[] of the desired column names */
         constructDataFrameManually(new_column_names);
     }
 
     public void constructDataFrameFromCSV(string filepath) {
+        // Fills the data frame from existing data in a CSV file
         string[] CSV_data = readCSV(filepath);
         constructShortDataFrame(CSV_data);
     }
 
     public void constructDataFrameManually(string[] new_column_names) {
+        // Sets up a base, empty data frame with the desired column names for later population
         this.column_names = new_column_names;
         for(int i = 0; i < new_column_names.Length; i++) {
             object[] empty_array = {};
@@ -388,23 +421,23 @@ class CSVDataFrame {
     }
 
     public void constructShortDataFrame(string[] CSV_data) {
-        /* Assumes all data is of the primitive data type "short", e.g. an integer less than 32,767 in magnitudes 
-           This method is bespoke in the sense that it works only for a subset of cases, which we know applies here */
+        /* Assumes all data is of the primitive data type "short", e.g. an integer less than 32,767 in magnitude
+           This method is bespoke in the sense that it works only for a subset of cases, but we know it will for the AVAMAE lift problem */
         this.column_names = CSV_data[0].Split(",");
         this.column_data = new object[this.column_names.Length][];
         for(int i = 0; i < column_data.Length; i++) {
-                this.column_data[i] = new object[CSV_data.Length-1];
+                this.column_data[i] = new object[CSV_data.Length-1]; // makes empty columns to be filled with the CSV data at a later date
             }
         for(int i = 1; i < CSV_data.Length; i++) {
             string[] temp_split = CSV_data[i].Split(",");
             for(int j = 0; j < temp_split.Length; j++) {
-                this.column_data[j][i-1] = Int16.Parse(temp_split[j]);
+                this.column_data[j][i-1] = Int16.Parse(temp_split[j]); // Populate the columns, I wrote this method knowing I would only be dealing with 16-bit integers
             }
         }
     }
 
     public void printTable() {
-        /* used in the debugging process to ensure formatting was correct */
+        // used in the debugging process to ensure formatting was correct and any sense checks could be done
         for(int i = 0; i < this.column_names.Length; i++) {
             System.Console.Write(this.column_names[i]);
             System.Console.Write(", ");
@@ -420,18 +453,22 @@ class CSVDataFrame {
     }
 
     public object[] column(string name) {
+        // Conveniently returns a column of the data frame given the column's name
         return(this.column_data[Array.IndexOf(this.column_names,name)]);
     }
 
     public void appendToColumn(string column_name, object item) {
+        // Conveniently appends an object to a column
         this.column_data[Array.IndexOf(this.column_names,column_name)] = Utility.appendArrays(this.column_data[Array.IndexOf(this.column_names,column_name)],item);
     }
 
     public int length() {
+        // Because I'm lazy and didn't want to retrieve a column with the "column" function and then find it's length every time
         return(this.column_data[0].Length);
     }
 
     public void saveCSV(string path) {
+        // Saves the data frame in the CSV format
         string[] lines = {};
         object[] line = {};
         for(int i = 0; i < this.column_names.Length; i++) {
@@ -450,11 +487,12 @@ class CSVDataFrame {
 }
 
 class Utility {
-    /* Generic helper class to provide various C# methods since I'm trying not to rely on libraries */
+    // Generic helper class to provide various C# methods since I'm trying not to rely on libraries
     public Utility() {
     }
 
     public static object[] subsetArray(object[] array, int from, int to) {
+        // Returns a slice of the array from it's "from" element to it's "to" element, including the "from" element but excluding the "to" element
         object[] new_array = new object[to-from];
         for(int i = from; i < to; i++) {
             new_array[i-from] = array[i];
@@ -463,6 +501,7 @@ class Utility {
     }
 
     public static object[] addArrays(object[] array1, object[] array2) {
+        // Adds two arrays together - into a 1D array not a 2D one, e.g. every element of array 2 is appended to array 1
         object[] new_array = new object[array1.Length+array2.Length];
         for(int i = 0; i < array1.Length; i++) {
             new_array[i] = array1[i];
@@ -474,6 +513,7 @@ class Utility {
     }
 
     public static object[] appendArrays(object[] array, object element) {
+        // Appends an object to an array. Potentially misleading name but I got used to writing it so never changed it
         object[] new_array = new object[array.Length + 1];
         for(int i = 0; i < array.Length; i++) {
             new_array[i] = array[i];
@@ -484,6 +524,7 @@ class Utility {
 
     // Need to overload so we can add strings to arrays to save them in text readable format
     public static string[] appendArrays(string[] array, string element) {
+        // Appends a string to an array. Potentially misleading name but I got used to writing it so never changed it
         string[] new_array = new string[array.Length + 1];
         for(int i = 0; i < array.Length; i++) {
             new_array[i] = array[i];
@@ -493,6 +534,7 @@ class Utility {
     }
 
     public static object[][] arrayAppendArrays(object[][] array, object[] subarray) {
+        // appends a 1D array to a 2D array
         object[][] new_array = new object[array.Length+1][];
         for(int i = 0; i < array.Length; i++) {
             new_array[i] = array[i];
@@ -510,12 +552,16 @@ class Utility {
     }
 
     public static object[][] getAllPossibleListCombinations(object[] array) {
+        /* Works with the recursive function "calcListCombs" to find every possible way of ordering the
+           elements in an input array, and returning a 2D array of all elements.
+           ----------------------- WARNING! -----------------------------------
+           Extremely computationally intense - will cause awful performance for arrays of length 10 or above */
         object[] bolt = {};
         List<object[]> combs = new List<object[]>();
-        combs = Utility.calcListCombs(array,combs,bolt);
+        combs = Utility.calcListCombs(array,combs,bolt); // Recursive function where the magic happens!
         List<string> string_results = new List<string>();
-        foreach(object[] item in combs) {
-            string_results.Add(string.Join(",",item));
+        foreach(object[] item in combs) { // calcListCombs doesn't filter out duplicates, but it's hard to find duplicate arrays in a 2D array
+            string_results.Add(string.Join(",",item)); // easier to turn everything into a string, find and erase duplicate strings, and then turn back into an array
         }
         string_results = string_results.Distinct().ToList();
         object[][] combs_final = new object[string_results.Count][];
@@ -526,9 +572,13 @@ class Utility {
     }
 
     public static List<object[]> calcListCombs(object[] source_list, List<object[]> combs, object[] bolt) {
-        /* Method that fills a text document containing all possible combinations of an array, for later retrieval
-           "source_list": the 1D array to be evaluated
-           "bolt": the 1D array to be "bolted on" to the start of the source_list so all original array elements are accounted for */
+        /* Recursive function that calculates every possible way of ordering an array "source_list";
+           Not intended to be called directly by the user due to it's novel method and complexity. Use "getAllPossibleListCombinations" in practise
+           combs: the 2D array to store all the calculated combinations; needs to be returned from and passed to the function
+           bolt: Method works by "rotating" the array, and all subsets of the array, so when taking a subset of the array need to remember the bit you "forgot" to give the overall unique combination
+           
+           Exact way this works is to complicated to describe in a docstring so will be explained in detail in the documentaion */
+
         for(int i = 0; i < source_list.Length; i++) {
             source_list = Utility.rotateArray(source_list);
             combs.Add(Utility.addArrays(bolt,source_list));
@@ -541,27 +591,20 @@ class Utility {
         return(combs);
     }
 
-    public static void save2DArrayToFile(object[][] array, string path) {
-        string[] list_to_save = {};
-        foreach(object item in array) {
-            list_to_save = appendArrays(list_to_save, string.Join(",",item));
-        }
-    }
-
     public static void appendArrayToFile(object[] array, string path) {
+        // Appends an array to a file as a raw text string
         System.IO.File.AppendAllText(path,string.Join(",",array)+"\n");
     }
 
-    public static void clearFile(string path) {
-        /* Because we rapidly calculate unique array elements and then save then append them to a file, we need to clear
-           the results of any previous calculation from the relevant file; however, deleting it means, if we ever want  to
-           clear it again, we first have to check it exists as deleting a non-existent file returns an error.
-           Therefore, it is more convenient to keep the file but simply erase it's contents! */
-        System.IO.File.WriteAllLines(path, new string[0]);
+    public static void appendStringToFile(string data, string path) {
+        // Appends a string to a file; could perhaps be an overload of the above function but I found it convenient to keep it separate
+        System.IO.File.AppendAllText(path,data+"\n");
     }
 
-    public static string[] getFileContents(string path) {
-        string[] contents  = {};
-        return(contents);
+    public static void clearFile(string path) {
+        /* For debugging and other uses it's convenient to append results a file as we calculate them
+           We want to start with an empty file everytime we run the script, but deleting it and later trying
+           to access it might return an error so it's better to create a new, empty file before we attempt to append to it */
+        System.IO.File.WriteAllLines(path, new string[0]);
     }
 }
